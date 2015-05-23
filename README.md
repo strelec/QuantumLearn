@@ -10,27 +10,23 @@ So, here is the manifesto of the QuantumLearn library:
 * Created around the idea of **immutable data structures**. This eases multithreading. Example: When you call *.fit* on *LinearRegression*, you get *FittedLinearRegression* back.
 * Algorithms are reporting their **progress status** during the training process. This is really important, since the training is usually a really long-lasting activity. It's nice to know how much time you have left to wait.
 
+Beware, this library is in really early alpha stage. Do not use in production.
+
 Dealing with the lack of algorithms
 ---
 Until the algorithm is implemented in effective Scala code, the algorithm from Weka is wrapped.
-
-Radioactive alpha
----
-Beware, this library is in really early alpha stage. Do not use in production.
 
 Dealing with datasets
 ===
 Let's first create an unlabeled (unsupervised) dataset. We create a matrix and name the features.
 
 ```scala
-val x = DenseMatrix(
+val unlabeled = Unlabeled(DenseMatrix(
 	(1.0,2.0,3.0),
 	(3.0,4.0,5.0),
 	(4.0,5.0,6.0),
 	(5.0,6.0,7.0)
-)
-
-val unlabeled = Unlabeled(x, Vector("x", "y", "z"))
+), Vector("x", "y", "z"))
 ```
 
 This dataset might be used for clustering or to make predictions on. However, if we want to learn from it, we have to label (supervize) it.
@@ -45,5 +41,14 @@ val labeled = Labeled(unlabeled,
 
 Transforming records, features and labels
 ===
+Say we want to add two new features to the dataset. We can use arbitrary data or reuse existing.
+
+```scala
+FeatureAdder(
+	"isFemale"    -> (row => !row("isMale")),
+	"ageInMonths" -> (row => row("age") * 12)
+).transform(data)
+```scala
+
 
 ...
