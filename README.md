@@ -44,11 +44,26 @@ Transforming records, features and labels
 Say we want to add two new features to the dataset. We can use arbitrary data or reuse existing.
 
 ```scala
-FeatureAdder(
+val augmented = FeatureAdder(
 	"isFemale"    -> (row => !row("isMale")),
 	"ageInMonths" -> (row => row("age") * 12)
-).transform(data)
+).transform(labeled)
+```
+
+The variable `augmented` now contains this dataset:
+
+```
+todo
+```
+
+In machine learning, it is often useful to transform the feature space to include all linear combinations of features, up to some power.
+
 ```scala
+val combined = LinearCombiner(
+	upToPower = 2
+	addBias = true
+).transform(labeled)
+```
 
 
 ...
