@@ -35,7 +35,6 @@ This dataset might be used for clustering or to make predictions on. However, if
 val isMale = Binary(unlabeled, Vector(true, false, true, true))
 val age    = Numerical(unlabeled, Vector(20.3, 56.8, 10.3, 11.8))
 val major  = Nominal(unlabeled, Vector("ML", "literature", "ML", "art"))
-)
 ```
 
 You can then group many of those single-labeled datasets into a multi-labeled one.
@@ -61,8 +60,7 @@ Wrapping Weka learners
 
 Everything Weka-connected resides in a `qlearn.algorithms.weka` package. Some of the Weka algorithms are already nicely wrapped. The ones that are not, you can wrap yourself:
 
-scala
-```
+```scala
 // simple example
 val wekaLearner = WekaWrapper(new J48)
 
