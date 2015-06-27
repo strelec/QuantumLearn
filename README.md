@@ -14,7 +14,7 @@ Beware, this library is in really early alpha stage. Do not use in production.
 
 Dealing with the lack of algorithms
 ---
-Until the algorithm is implemented in effective Scala code, the algorithm from Weka is wrapped.
+Until the algorithm is implemented in effective Scala code, the algorithm from Weka is wrapped. For now, this causes a dataset copy (but it is done only once).
 
 Dealing with datasets
 ===
@@ -32,16 +32,21 @@ val unlabeled = Unlabeled(DenseMatrix(
 This dataset might be used for clustering or to make predictions on. However, if we want to learn from it, we have to label (supervize) it.
 
 ```scala
-val labeled = Labeled(unlabeled,
-	"isMale" -> Binary(true, false, true, true),
-	"age"    -> Numerical(20.3, 56.8, 30.3, 34.8),
-	"study"  -> Nominal("ML", "literature", "ML", "art")
+val isMale = Binary(unlabeled, Vector(true, false, true, true))
+val age    = Numerical(unlabeled, Vector(20.3, 56.8, 10.3, 11.8))
+val major  = Nominal(unlabeled, Vector("ML", "literature", "ML", "art"))
 )
+```
+
+You can then group many of those single-labeled datasets into a multi-labeled one.
+
+```scala
+val labeled = MultiLabeled(isMale, age, major)
 ```
 
 Transforming records, features and labels
 ===
-Say we want to add two new features to the dataset. We can use arbitrary data or reuse existing.
+Say we want to add two new features to the dataset. We can use arbitrary data or reuse existing. Here's how it's done:
 
 ```scala
 val augmented = FeatureAdder(
@@ -50,20 +55,47 @@ val augmented = FeatureAdder(
 ).transform(labeled)
 ```
 
-The variable `augmented` now contains this dataset:
 
+Wrapping Weka learners
+===
+
+Everything Weka-connected resides in a `qlearn.algorithms.weka` package. Some of the Weka algorithms are already nicely wrapped. The ones that are not, you can wrap yourself:
+
+scala
 ```
-todo
+// simple example
+val wekaLearner = WekaWrapper(new J48)
+
+// complex example
+WekaWrapper({
+	val tmp = new J48
+	tmp.setMinNumObj(10)
+	tmp.setUseLaplace(true)
+	tmp
+})
 ```
 
-In machine learning, it is often useful to transform the feature space to include all linear combinations of features, up to some power.
+Once this is done, you can use Weka learners in the same manner as the native ones. It's that simple.
 
-```scala
-val combined = LinearCombiner(
-	upToPower = 2
-	addBias = true
-).transform(labeled)
-```
+Future improvements
+===
+This section presents future ideas for optimization / improvement. We are not in a hurry, first just make sure everything works correctly.
 
+Memory optimizations
+---
+* Think how could we adapt the learners to avoid copying the dataset K times on K-fold cross-validation. Ideas: bit masking vector, two phase learning (to splice out the test fold), ... There is no free luch, and this causes additional CPU costs and complicates the code and class design. Therefore debate whether this is reasonable - RAM is cheap novadays.
+* Learners should drop the reference to the learning dataset as soon as they are done learning. For example, with linear regression, we just remember the coefficients and allow the original dataset to be garbage collected.
+* Could sparse datasets easily be supported? What is the performance cost, since BLAS is not used? How could more advanced optimizations in Breeze library help? See also: [Breeze bug report](https://github.com/scalanlp/breeze/issues/360)
 
-...
+CPU & computational optimizations
+---
+* Which learners are capable of parallelism (or distributed computing - Hadoop, Akka, Spark)? This is not a huge concern, since things such as parameter selection (via cross validation), ensembles (bagging, stacking) are hugely parallel.
+* Since loss functions usually have unchanging target predictions, would preprocessing help?
+
+Algorithm improvements
+---
+* Do learning algorithms benefit from knowing the unsupervized future test data upfront? See: [CrossValidated question](https://stats.stackexchange.com/questions/156085/which-supervised-algorithms-benefit-from-knowing-future-inputs-upfront)
+
+Misc
+---
+* Java interop. Make it possible to use this library in Java without any extended effort.
