@@ -29,18 +29,28 @@ val unlabeled = Unlabeled(DenseMatrix(
 ), Vector("x", "y", "z"))
 ```
 
-This dataset might be used for clustering or to make predictions on. However, if we want to learn from it, we have to label (supervize) it.
+This dataset might be used for clustering or to make predictions on. However, if we want to learn from it, we have to label (supervize) it. Along with the dataset, you can specify a custom cost function, as is shown below with specifying hinge loss for the binary dataset.
 
 ```scala
-val isMale = Binary(unlabeled, Vector(true, false, true, true))
-val age    = Numerical(unlabeled, Vector(20.3, 56.8, 10.3, 11.8))
-val major  = Nominal(unlabeled, Vector("ML", "literature", "ML", "art"))
+val isMale = Binary("isMale", unlabeled, Vector(true, false, true, true), loss = HingeLoss)
+val age    = Numerical("age", unlabeled, Vector(20.3, 56.8, 10.3, 11.8))
+val major  = Nominal("major", unlabeled, Vector("ML", "literature", "ML", "art"))
 ```
 
 You can then group many of those single-labeled datasets into a multi-labeled one.
 
 ```scala
 val labeled = MultiLabeled(isMale, age, major)
+```
+
+Finally, to check everything is fine so far, we call `labeled.report`:
+
+```
+       x         y         z          isMale       age  major=ML  major=literature  major=art
+16.00000  2.000000  3.000000   ->   1.000000  20.30000  1.000000  0.00000000000000  0.0000000
+3.000000  11.00000  5.500000   ->   0.000000  56.80000  0.000000  1.00000000000000  0.0000000
+4.000000  8.000000  10.00000   ->   1.000000  10.30000  1.000000  0.00000000000000  0.0000000
+5.000000  100.0000  7.000000   ->   1.000000  11.80000  0.000000  0.00000000000000  1.0000000
 ```
 
 Transforming records, features and labels
@@ -62,7 +72,7 @@ Everything Weka-connected resides in a `qlearn.algorithms.weka` package. Some of
 
 ```scala
 // simple example
-val wekaLearner = WekaWrapper(new J48)
+WekaWrapper(new J48)
 
 // complex example
 WekaWrapper({
