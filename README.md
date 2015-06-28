@@ -22,10 +22,10 @@ Let's first create an unlabeled (unsupervised) dataset. We create a matrix and n
 
 ```scala
 val unlabeled = Unlabeled(DenseMatrix(
-	(1.0,2.0,3.0),
-	(3.0,4.0,5.0),
-	(4.0,5.0,6.0),
-	(5.0,6.0,7.0)
+	(16.0,2.0,3.0),
+	(3.0,11.0,5.5),
+	(4.0,8.0,10.0),
+	(5.0,100.0,7.0)
 ), Vector("x", "y", "z"))
 ```
 
@@ -37,13 +37,16 @@ val age    = Numerical("age", unlabeled, Vector(20.3, 56.8, 10.3, 11.8))
 val major  = Nominal("major", unlabeled, Vector("ML", "literature", "ML", "art"))
 ```
 
+Multi label datasets
+---
+
 You can then group many of those single-labeled datasets into a multi-labeled one.
 
 ```scala
 val labeled = MultiLabeled(isMale, age, major)
 ```
 
-Finally, to check everything is fine so far, we call `labeled.report`:
+Finally, to check everything is fine so far, we call `labeled.report` and get this on the standard output:
 
 ```
        x         y         z          isMale       age  major=ML  major=literature  major=art
@@ -51,6 +54,21 @@ Finally, to check everything is fine so far, we call `labeled.report`:
 3.000000  11.00000  5.500000   ->   0.000000  56.80000  0.000000  1.00000000000000  0.0000000
 4.000000  8.000000  10.00000   ->   1.000000  10.30000  1.000000  0.00000000000000  0.0000000
 5.000000  100.0000  7.000000   ->   1.000000  11.80000  0.000000  0.00000000000000  1.0000000
+```
+
+Image datasets
+---
+This is currently just a proposal. In the future, it should be possible to instantiate an unabeled dataset containing image data. This dataset behaves no differently as the one described above.
+
+Let's create the collection of images, each of which is resized to 40x30 pixels. Moreover, each image is stored five times - the original, translated 1 and 5 pixels to the right and 1 and 3 pixels to the left. Additionally, each images has a 30% chance of appearing rotated by 1, 3 of 5 degrees.
+
+```scala
+val unlabeledImages = ImageDataset(
+	Seq("images/bird1.jpg", "images/bird2.jpg", "images/bird3.png"),
+	height = 40, width = 30,
+	translations = Seq(1, -1, -3, 5),
+	rotations = Seq(1.0, 3.0, 5.0), rotationProbability = 0.3
+)
 ```
 
 Transforming records, features and labels
@@ -99,6 +117,22 @@ CPU & computational optimizations
 ---
 * Which learners are capable of parallelism (or distributed computing - Hadoop, Akka, Spark)? This is not a huge concern, since things such as parameter selection (via cross validation), ensembles (bagging, stacking) are hugely parallel.
 * Since loss functions usually have unchanging target predictions, would preprocessing help?
+
+No nominal attributes on X dataset
+---
+For efficiency (simplicity, memory and coputation) reasons, the X dataset is represented as as simple matrix. This suffices most of the time by simply binarizing the nominal attribures. Some algorithms, such as Naive bayes, requires the higher level of knowledge. This could be solved this way:
+
+* Make `=` a special symbol in the attribute name. Therefore, if you have attrbutes named `hairColor=grey`, `hairColor=black`, `hairColor=blonde`, the classifier can deduce the category memberships. However, such storage is inefficient with attrbutes with many possible values. Moreover, specifying attribute names to adhere to our standard is just a call for problems.
+* Represent the ordinal value as a double in a single attribute (`grey` = 1.0, `black` = 2.0, `blonde` = 3.0), and then accept the information about which attributes are stored this way. Example:
+
+```scala
+val unlabeled = Unlabeled(DenseMatrix(
+	(1.0,2.0,3.0),
+	(2.0,11.0,5.5),
+	(1.0,8.0,10.0),
+	(3.0,100.0,7.0)
+), Vector("hairColor", "y", "z"), nominal = Seq("hairColor"))
+```
 
 Algorithm improvements
 ---
