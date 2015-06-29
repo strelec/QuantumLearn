@@ -8,6 +8,7 @@ So, here is the manifesto of the QuantumLearn library:
 * Where possible, the **BLAS & LAPACK methods** are used. This brings up to 10x speedup compared to Weka.
 * Created with support for **multilabel datasets** from the start. This enables much faster learning for algorithms that support that (NN, Linear / Logistic regression), otherwise it just fails back to training a separate model for each label.
 * Created around the idea of **immutable data structures**. This eases multithreading. Example: When you call *.fit* on *LinearRegression*, you get *FittedLinearRegression* back.
+* Leverage the abilities of the type system. Scala helps a great deal here. This means we can catch obvious errors at compile times instead of failing with an exception - such as passing a nominal dataset to a regressor.
 * Algorithms are reporting their **progress status** during the training process. This is really important, since the training is usually a really long-lasting activity. It's nice to know how much time you have left to wait.
 
 Beware, this library is in really early alpha stage. Do not use in production.
