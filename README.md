@@ -26,15 +26,15 @@ val unlabeled = Unlabeled(DenseMatrix(
 	(3.0,11.0,5.5),
 	(4.0,8.0,10.0),
 	(5.0,100.0,7.0)
-), Vector("x", "y", "z"))
+), Vector('x, 'y, 'z))
 ```
 
 This dataset might be used for clustering or to make predictions on. However, if we want to learn from it, we have to label (supervize) it. Along with the dataset, you can specify a custom cost function, as is shown below with specifying hinge loss for the binary dataset.
 
 ```scala
-val isMale = Binary("isMale", unlabeled, Vector(true, false, true, true), loss = HingeLoss)
-val age    = Numerical("age", unlabeled, Vector(20.3, 56.8, 10.3, 11.8))
-val major  = Nominal("major", unlabeled, Vector("ML", "literature", "ML", "art"))
+val isMale = Binary('isMale, unlabeled, Vector(true, false, true, true), loss = HingeLoss)
+val age    = Numerical('age, unlabeled, Vector(20.3, 56.8, 10.3, 11.8))
+val major  = Nominal('major, unlabeled, Vector("ML", "literature", "ML", "art"))
 ```
 
 Multi label datasets
@@ -77,8 +77,8 @@ Say we want to add two new features to the dataset. We can use arbitrary data or
 
 ```scala
 val augmented = FeatureAdder(
-	"isFemale"    -> (row => !row("isMale")),
-	"ageInMonths" -> (row => row("age") * 12)
+	'isFemale    -> (row => !row('isMale)),
+	'ageInMonths -> (row => row('age) * 12)
 ).transform(labeled)
 ```
 
@@ -131,7 +131,7 @@ val unlabeled = Unlabeled(DenseMatrix(
 	(2.0,11.0,5.5),
 	(1.0,8.0,10.0),
 	(3.0,100.0,7.0)
-), Vector("hairColor", "y", "z"), nominal = Seq("hairColor"))
+), Vector('hairColor, 'y, 'z), nominal = Seq('hairColor))
 ```
 
 Algorithm improvements
