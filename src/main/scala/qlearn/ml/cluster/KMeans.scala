@@ -5,6 +5,7 @@ import qlearn.dataset.{NominalBasic, Unlabeled}
 import qlearn.Types._
 import qlearn.loss.numerical.distance.{Distance, EuclideanDistance}
 import qlearn.util.Util
+import qlearn.ml.Clusterer
 
 import scala.util.Random
 
