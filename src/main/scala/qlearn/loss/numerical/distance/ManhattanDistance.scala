@@ -4,7 +4,7 @@ import breeze.linalg.sum
 import breeze.numerics.abs
 import qlearn.Types._
 
-object MahnattanDistance extends Distance {
+object ManhattanDistance extends Distance {
 
 	def apply(a: Vec, b: Vec) = sum(abs(a - b))
 

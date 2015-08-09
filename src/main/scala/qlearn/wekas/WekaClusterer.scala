@@ -15,7 +15,7 @@ class WekaClusterer(val clusterer: ClustererW) extends Clusterer {
 
 	protected def convertDistance(dist: Distance) = dist match {
 		case EuclideanDistance => new weka.core.EuclideanDistance
-		case MahnattanDistance => new weka.core.ManhattanDistance
+		case ManhattanDistance => new weka.core.ManhattanDistance
 		case ChebyshevDistance => new weka.core.ChebyshevDistance
 		case NormDistance(p) =>
 			val tmp = new weka.core.MinkowskiDistance
