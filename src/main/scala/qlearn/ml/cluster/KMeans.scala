@@ -9,7 +9,7 @@ import qlearn.util.Util
 import scala.util.Random
 
 
-case class KMeans(k: Int, distance: Distance = EuclideanDistance, eps: Double = 10e-6, maxIterations: Int = 10000, random: Random = Random) {
+case class KMeans(k: Int, distance: Distance = EuclideanDistance, eps: Double = 10e-6, maxIterations: Int = 10000, random: Random = Random) extends Clusterer {
 
 	/*
 		This is the algoritm that performs k-means clustering via the iterative approach.
