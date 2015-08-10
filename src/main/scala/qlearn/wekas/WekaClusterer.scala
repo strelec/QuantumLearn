@@ -39,8 +39,7 @@ class WekaClusterer(val clusterer: ClustererW) extends Clusterer {
 		)
 
 		val k = copy.numberOfClusters
-		val names = (0 until k).map(_.toString).toVector
-		NominalBasic('cluster, data, y, names)
+		NominalBasic('cluster, data, y, names(k))
 	}
 
 	override def toString = s"Weka${clusterer.getClass.getSimpleName}()"

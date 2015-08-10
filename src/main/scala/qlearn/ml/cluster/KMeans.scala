@@ -54,11 +54,10 @@ case class KMeans(k: Int, distance: Distance = EuclideanDistance, eps: Double = 
 			println(s"Error: $error")
 			error
 		}.sliding(2).takeWhile {
-			case Seq(prev, cur) => prev - cur > eps; true
+			case Seq(prev, cur) => prev - cur > eps
 		}.toVector
 
-		val names = (0 until k).map(_.toString).toVector
 		val y = Vec.tabulate(data.recordCount)( i => closest(mat(i, ::).t) )
-		NominalBasic('cluster, data, y, names)
+		NominalBasic('cluster, data, y, names(k))
 	}
 }
