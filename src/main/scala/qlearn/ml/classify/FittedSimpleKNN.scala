@@ -1,12 +1,12 @@
 package qlearn.ml.classify
 
-import breeze.linalg.{normalize, sum}
+import breeze.linalg.sum
 import qlearn.Types._
 import qlearn.dataset.{Nominal, Unlabeled}
 import qlearn.loss.numerical.distance.{EuclideanDistance, Distance}
 import qlearn.ml.FittedModel
 
-case class FittedKNN(
+case class FittedSimpleKNN(
 	schema: Nominal,
 	k: Int,
 	distance: Distance = EuclideanDistance,
