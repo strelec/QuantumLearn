@@ -10,13 +10,12 @@ import qlearn.ml.Clusterer
 import scala.util.Random
 
 
-case class KMeans(k: Int, distance: Distance = EuclideanDistance, eps: Double = 10e-6, maxIterations: Int = 10000, random: Random = Random) extends Clusterer {
+case class KMeans(k: Int, distance: Distance = EuclideanDistance, eps: Double = 10e-6, maxIterations: Int = 500, random: Random = Random) extends Clusterer {
 
 	/*
 		This is the algoritm that performs k-means clustering via the iterative approach.
 
 		TODO:
-			* Handle correct error calculation and stopping conditions (when last m iterations did not improve)
 			* Store current best result to be returned
 	 */
 
@@ -53,8 +52,8 @@ case class KMeans(k: Int, distance: Distance = EuclideanDistance, eps: Double = 
 
 			println(s"Error: $error")
 			error
-		}.sliding(2).takeWhile {
-			case Seq(prev, cur) => prev - cur > eps
+		}.sliding(4).takeWhile {
+			case Seq(prev, _, _, cur) => prev - cur > 4*eps
 		}.toVector
 
 		val y = Vec.tabulate(data.recordCount)( i => closest(mat(i, ::).t) )
