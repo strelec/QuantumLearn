@@ -8,7 +8,7 @@ import qlearn.ml.Model
 case class SameDistribution() extends Model[Nominal] {
 
 	def fit(data: Nominal) = {
-		val columnSums = sum(data.ymat.c).toDenseVector
+		val columnSums = sum(data.ymat.c).t
 		FittedSameDistribution(data, columnSums / sum(columnSums))
 	}
 }

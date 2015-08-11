@@ -11,7 +11,7 @@ case class SameDatasetValidation[T <: SingleLabeled[T]](data: T) extends Validat
 		Space complexity: O(1)
 		Time complexity: O(1)
 	 */
-	
+
 	def validate(model: Model[T]) = {
 		val prediction = model.fit(data).predict(data.x)
 		loss(data, prediction)

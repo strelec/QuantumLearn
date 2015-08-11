@@ -49,9 +49,9 @@ case class FittedSimpleKNN(
 			// select k closest corresponding output rows
 			val chosen = schema.ymat(smallest, ::).toDenseMatrix
 			// weight those rows with "weighted" vector
-			val result = sum((chosen.c :* weighted).c).toDenseVector
+			val columnSums = sum((chosen.c :* weighted).c).t
 			// finally, normalize
-			result / sum(result)
+			columnSums / sum(columnSums)
 		}
 		schema.updated(data, newy)
 	}
