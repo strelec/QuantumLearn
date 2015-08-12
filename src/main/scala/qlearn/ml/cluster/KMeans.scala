@@ -47,7 +47,7 @@ case class KMeans(k: Int, distance: Distance = EuclideanDistance, eps: Double = 
 			}
 
 			updated.c /= counts
-			val error = distance(centroids, updated)
+			val error = distance.total(centroids, updated)
 			centroids = updated
 
 			println(s"Error: $error")
