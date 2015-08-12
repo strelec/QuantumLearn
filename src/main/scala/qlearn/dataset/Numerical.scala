@@ -2,7 +2,7 @@ package qlearn.dataset
 
 import qlearn.Types._
 import qlearn.loss.Loss
-import qlearn.loss.numerical.SquaredLoss
+import qlearn.loss.numerical.MeanSquaredLoss
 import qlearn.util.Util
 import weka.core.{Attribute, Instances}
 
@@ -42,6 +42,6 @@ case class Numerical(name: Symbol, x: Unlabeled, y: Vec, loss: Loss[_ >: Numeric
 }
 
 object Numerical {
-	def apply(name: Symbol, x: Unlabeled, y: Seq[Double], loss: Loss[_ >: Numerical] = SquaredLoss): Numerical =
+	def apply(name: Symbol, x: Unlabeled, y: Seq[Double], loss: Loss[_ >: Numerical] = MeanSquaredLoss): Numerical =
 		Numerical(name, x, Vec(y: _*), loss)
 }

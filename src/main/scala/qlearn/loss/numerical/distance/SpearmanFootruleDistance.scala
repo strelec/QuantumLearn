@@ -9,13 +9,13 @@ object SpearmanFootruleDistance extends Distance {
 	def denom(k: Int) =
 		if (k % 2 == 0) k*k/2.0 else (k+1)*(k-1)/2.0
 
-	def apply(a: Vec, b: Vec) =
+	override def apply(a: Vec, b: Vec) =
 		1 - sum(abs(a - b)) / denom(a.length)
 
-	def apply(a: Mat, b: Vec) =
+	override def apply(a: Mat, b: Vec) =
 		sum(abs(a.r - b).r) / -denom(a.cols) + 1.0
 
-	def apply(a: Mat, b: Mat) =
+	override def apply(a: Mat, b: Mat) =
 		sum(abs(a - b).r) / -denom(a.cols) + 1.0
 
 	override def total(a: Mat, b: Mat) =

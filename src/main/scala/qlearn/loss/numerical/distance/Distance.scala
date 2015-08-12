@@ -2,8 +2,13 @@ package qlearn.loss.numerical.distance
 
 import breeze.linalg.sum
 import qlearn.Types._
+import qlearn.dataset.Numerical
+import qlearn.loss.Loss
 
-abstract class Distance {
+abstract class Distance extends Loss[Numerical] {
+
+	def apply(actual: Numerical, predicted: Numerical) =
+		apply(actual.y, predicted.y)
 
 	/*
 		Compute the distance between two vectors.

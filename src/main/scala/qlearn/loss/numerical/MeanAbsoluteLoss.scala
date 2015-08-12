@@ -1,10 +1,12 @@
 package qlearn.loss.numerical
 
 import breeze.stats.mean
+import breeze.numerics.abs
 import qlearn.dataset.Numerical
 import qlearn.loss.Loss
 
-object SquaredLoss extends Loss[Numerical] {
+object MeanAbsoluteLoss extends Loss[Numerical] {
+
 	def apply(actual: Numerical, predicted: Numerical) =
-		mean((actual.y - predicted.y) :^ 2.0)
-}
+		 mean(abs(actual.y - predicted.y))
+ }
