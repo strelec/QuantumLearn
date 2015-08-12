@@ -2,8 +2,7 @@ package qlearn.loss.numerical.distance
 
 import breeze.linalg.sum
 import breeze.numerics.abs
-import breeze.stats.mean
-import qlearn.Types.{Mat, Vec}
+import qlearn.Types._
 
 object SpearmanFootruleDistance extends Distance {
 
@@ -12,6 +11,12 @@ object SpearmanFootruleDistance extends Distance {
 
 	def apply(a: Vec, b: Vec) =
 		1 - sum(abs(a - b)) / denom(a.length)
+
+	def apply(a: Mat, b: Vec) =
+		sum(abs(a.r - b).r) / -denom(a.cols) + 1.0
+
+	def apply(a: Mat, b: Mat) =
+		sum(abs(a - b).r) / -denom(a.cols) + 1.0
 
 	override def total(a: Mat, b: Mat) =
 		a.rows - sum(abs(a - b)) / denom(a.cols)
