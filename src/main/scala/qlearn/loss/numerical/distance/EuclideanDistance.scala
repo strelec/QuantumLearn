@@ -11,5 +11,5 @@ object EuclideanDistance extends Distance {
 		norm((a.r - b).r)
 
 	override def apply(a: Mat, b: Mat) =
-		sum(norm((a - b).r))
+		norm((a - b).r)
 }

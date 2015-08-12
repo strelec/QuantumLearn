@@ -10,5 +10,7 @@ object ManhattanDistance extends Distance {
 
 	override def apply(a: Mat, b: Vec) = sum(abs(a.r - b).r)
 
-	override def apply(a: Mat, b: Mat) = sum(abs(a - b))
+	override def apply(a: Mat, b: Mat) = sum(abs(a - b).r)
+
+	override def total(a: Mat, b: Mat) = sum(abs(a - b))
 }

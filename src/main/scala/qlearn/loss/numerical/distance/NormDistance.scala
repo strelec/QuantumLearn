@@ -12,5 +12,5 @@ case class NormDistance(p: Double) extends Distance {
 		norm((a.r - b).r, p)
 
 	override def apply(a: Mat, b: Mat) =
-		sum(norm((a - b).r, p))
+		norm((a - b).r, p)
 }

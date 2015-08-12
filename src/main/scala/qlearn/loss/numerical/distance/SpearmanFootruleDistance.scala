@@ -13,6 +13,6 @@ object SpearmanFootruleDistance extends Distance {
 	def apply(a: Vec, b: Vec) =
 		1 - sum(abs(a - b)) / denom(a.length)
 
-	override def apply(a: Mat, b: Mat) =
+	override def total(a: Mat, b: Mat) =
 		a.rows - sum(abs(a - b)) / denom(a.cols)
 }

@@ -12,5 +12,5 @@ object ChebyshevDistance extends Distance {
 		max((a.r - b).r)
 
 	override def apply(a: Mat, b: Mat) =
-		sum(max(abs(a - b).r))
+		max(abs(a - b).r)
 }

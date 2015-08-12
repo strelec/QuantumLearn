@@ -1,5 +1,6 @@
 package qlearn.loss.numerical.distance
 
+import breeze.linalg.sum
 import qlearn.Types._
 
 abstract class Distance {
@@ -21,13 +22,20 @@ abstract class Distance {
 		)
 
 	/*
+		Compute a vector of distances between the coaligned
+		rows of both matrices.
+	 */
+
+	def apply(a: Mat, b: Mat): Vec =
+		Vec.tabulate(a.rows)( i =>
+			apply(a(i, ::).t, b(i, ::).t)
+		)
+
+	/*
 		For performance reasons, you can also override this method.
 		It computes the sum of the distances that you obtain by
 		taking the pairwise rows of the both matrices.
 	 */
 
-	def apply(a: Mat, b: Mat): Double =
-		(0 until a.rows).map( i =>
-			apply(a(i, ::).t, b(i, ::).t)
-		).sum
+	def total(a: Mat, b: Mat): Double = sum(apply(a, b))
 }
