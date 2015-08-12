@@ -5,12 +5,6 @@ import qlearn.dataset.{MultiLabeled, SingleLabeled}
 import scala.util.Random
 
 abstract class Model[T <: SingleLabeled[T]] {
-	/*
-		Models whose performance depends on stohastic behavior
-		should override this variable (allowing the user to specify it)
-	 */
-
-	val random = Random
 
 	/*
 		Models that want to report their learning status back to the user

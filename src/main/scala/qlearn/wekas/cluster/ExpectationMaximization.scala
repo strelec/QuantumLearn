@@ -1,5 +1,6 @@
 package qlearn.wekas.cluster
 
+import qlearn.ml.Randomized
 import qlearn.wekas.WekaClusterer
 import weka.clusterers.EM
 
@@ -13,8 +14,8 @@ case class ExpectationMaximization(
 	maxIterations: Int = 100,
 	epsForK: Double = 1e-6,
 	epsForE: Double = 1e-6,
-	random: Random = Random
-) extends WekaClusterer(new EM) {
+	seed: Long = Random.nextLong
+) extends WekaClusterer(new EM) with Randomized {
 
 	val c = clusterer.asInstanceOf[EM]
 
@@ -25,5 +26,5 @@ case class ExpectationMaximization(
 	c.setMaxIterations(maxIterations)
 	c.setMinLogLikelihoodImprovementCV(epsForK)
 	c.setMinLogLikelihoodImprovementIterating(epsForE)
-	c.setSeed(random.nextInt)
+	c.setSeed(seed.toInt)
 }

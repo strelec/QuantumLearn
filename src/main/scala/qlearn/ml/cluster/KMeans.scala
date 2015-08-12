@@ -5,12 +5,12 @@ import qlearn.dataset.{NominalBasic, Unlabeled}
 import qlearn.Types._
 import qlearn.loss.numerical.distance.{Distance, EuclideanDistance}
 import qlearn.util.Util
-import qlearn.ml.Clusterer
+import qlearn.ml.{Randomized, Clusterer}
 
 import scala.util.Random
 
 
-case class KMeans(k: Int, distance: Distance = EuclideanDistance, eps: Double = 10e-6, maxIterations: Int = 500, random: Random = Random) extends Clusterer {
+case class KMeans(k: Int, distance: Distance = EuclideanDistance, eps: Double = 10e-6, maxIterations: Int = 500, seed: Long = Random.nextLong) extends Clusterer with Randomized {
 
 	/*
 		This is the algoritm that performs k-means clustering via the iterative approach.
@@ -27,7 +27,7 @@ case class KMeans(k: Int, distance: Distance = EuclideanDistance, eps: Double = 
 
 		val mat = data.xmat
 		var centroids = {
-			val randomSubset = Util.randomSubset(data.indices, k, random)
+			val randomSubset = Util.randomSubset(data.indices, k, getRandom)
 			mat(randomSubset, ::).toDenseMatrix
 		}
 
