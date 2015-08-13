@@ -11,6 +11,11 @@ abstract class Distance extends Loss[Numerical] {
 
 	require(range._1 < range._2, "Smaller distance has to mean better.")
 
+	
+	def dot(a: Vec, b: Vec) = a.dot(b)
+	def dot(a: Mat, b: Vec) = a.r.dot(b)
+	def dot(a: Mat, b: Mat) = sum((a :* b).r)
+
 
 	def apply(actual: Numerical, predicted: Numerical) =
 		apply(actual.y, predicted.y)

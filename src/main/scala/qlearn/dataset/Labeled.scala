@@ -42,7 +42,7 @@ abstract class Labeled[+T <: Labeled[T]] {
 	def duplicate: T = updated(x.duplicate, ymat.copy)
 
 	def shuffle: T =
-		pick( Random.shuffle(0 to recordCount - 1).toSeq )
+		pick( Random.shuffle(0 to recordCount - 1) )
 
 	/*
 		Function that writes the dataset to stdout

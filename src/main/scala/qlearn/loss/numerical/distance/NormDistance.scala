@@ -1,6 +1,6 @@
 package qlearn.loss.numerical.distance
 
-import breeze.linalg.{norm, sum}
+import breeze.linalg.norm
 import qlearn.Types._
 
 case class NormDistance(p: Double) extends Distance {

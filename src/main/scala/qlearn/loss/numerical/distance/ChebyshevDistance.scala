@@ -1,6 +1,6 @@
 package qlearn.loss.numerical.distance
 
-import breeze.linalg.{sum, max}
+import breeze.linalg.max
 import breeze.numerics.abs
 import qlearn.Types._
 
