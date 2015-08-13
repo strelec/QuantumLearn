@@ -8,16 +8,21 @@ import qlearn.util.Util
 
 case class Binary(name: Symbol, x: Unlabeled, yb: Vec, loss: Loss[Binary]) extends Nominal {
 
-	val names = Vector("yes", "no")
+	val names = Vector("no", "yes")
 
 	lazy val ymat =
 		Mat(yb.map( v =>
-			Seq(v, 1-v)
+			Seq(1-v, v)
 		).toScalaVector: _*)
+
+	override val y =
+		yb.map( v =>
+			if (v > 0.5) 1 else 0
+		)
 
 	def updated(xnew: Unlabeled, ynew: Mat): Binary = {
 		assert(ynew.cols == names.size)
-		copy(x = xnew, yb = ynew(::, 0))
+		copy(x = xnew, yb = ynew(::, 1))
 	}
 
 	/*
