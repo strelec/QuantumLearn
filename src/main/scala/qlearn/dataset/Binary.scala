@@ -15,9 +15,11 @@ case class Binary(name: Symbol, x: Unlabeled, yb: Vec, loss: Loss[Binary]) exten
 			Seq(1-v, v)
 		).toScalaVector: _*)
 
+	val yt = yb :>= 0.5
+
 	override val y =
 		yb.map( v =>
-			if (v > 0.5) 1 else 0
+			if (v >= 0.5) 1 else 0
 		)
 
 	def updated(xnew: Unlabeled, ynew: Mat): Binary = {
