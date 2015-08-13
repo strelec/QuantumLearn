@@ -7,6 +7,9 @@ import qlearn.loss.Loss
 import qlearn.Types.Mat
 
 case class MatrixLoss(matrix: (Symbol, Seq[Double])*) extends Loss[Nominal] {
+
+	val range = 0.0 -> Double.PositiveInfinity
+
 	val m = Mat(matrix.sortBy(_._1.name).map(_._2): _*)
 
 	def apply(actual: Nominal, predicted: Nominal) =

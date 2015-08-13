@@ -5,6 +5,8 @@ import qlearn.loss.Loss
 
 object F1 extends Loss[Binary] {
 
+	val range = 1.0 -> 0.0
+
 	def apply(actual: Binary, predicted: Binary) = {
 		val tp = (actual.yt :& predicted.yt).activeSize.toDouble
 		val fp = (!actual.yt :& predicted.yt).activeSize

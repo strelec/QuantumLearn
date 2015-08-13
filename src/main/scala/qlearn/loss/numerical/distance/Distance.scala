@@ -7,6 +7,11 @@ import qlearn.loss.Loss
 
 abstract class Distance extends Loss[Numerical] {
 
+	def range = 0.0 -> Double.PositiveInfinity
+
+	require(range._1 < range._2, "Smaller distance has to mean better.")
+
+
 	def apply(actual: Numerical, predicted: Numerical) =
 		apply(actual.y, predicted.y)
 

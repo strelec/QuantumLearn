@@ -6,6 +6,8 @@ import qlearn.Types._
 
 object CosineSimilarity extends Distance {
 
+	override val range = 0.0 -> 1.0
+
 	def apply(a: Vec, b: Vec) = {
 		val sim = a.dot(b) / math.sqrt(a.dot(a) * b.dot(b))
 		1 - math.max(sim, 0.0)
