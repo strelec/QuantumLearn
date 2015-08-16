@@ -1,6 +1,6 @@
 package qlearn.ml.classify
 
-import breeze.linalg.{max, min, sum}
+import breeze.linalg.sum
 import qlearn.Types._
 import qlearn.dataset.Nominal
 import qlearn.ml.{Randomized, Model}
@@ -49,27 +49,28 @@ case class RandomTree(
 			var best = 0.0
 
 			val sorted = indices.sortBy(data.xmat(_, feature))
-			val l = data.ymat(sorted.head, ::).t.copy
-			val r = distribution - l
-			sorted.indices.tail.init.foreach { i =>
-				l += data.ymat(sorted(i), ::).t
-				r -= data.ymat(sorted(i), ::).t
+			val l = data.ymat(0, ::).t * 0.0
+			val r = distribution
+			sorted.indices.init.foreach { i =>
+				val row = data.ymat(sorted(i), ::).t
+				l += row
+				r -= row
 
 				val sumL = sum(l)
 				val sumR = sum(r)
 				val score =
 					sum(l.map( d =>
 						if (d == 0) 0 else d * math.log(d / sumL)
-					)) + sum(r.map( d =>
+					)) / sumL + sum(r.map( d =>
 						if (d == 0) 0 else d * math.log(d / sumR)
-					))
+					)) / sumR
 
 				if (score > bestScore) {
 					bestScore = score
 					best = data.xmat(sorted(i), feature) + data.xmat(sorted(i+1), feature)
 				}
 			}
-			best/2 -> bestScore
+			best/2 -> -bestScore
 		}
 
 		/*
@@ -90,7 +91,7 @@ case class RandomTree(
 			val (feature, (split, _)) =
 				randomFeaturePick.map( feature =>
 					feature -> bestSplitPoint(feature, distribution)
-				).maxBy(_._2._2)
+				).minBy(_._2._2)
 
 			val (left, right) = indices.partition(data.xmat(_, feature) <= split)
 			Node(
