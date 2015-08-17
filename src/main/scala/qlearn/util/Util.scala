@@ -31,4 +31,9 @@ object Util {
 		}
 		res
 	}
+
+	def randomWithReplacement[T](items: IndexedSeq[T], k: Int, rnd: Random = Random) =
+		Vector.fill(k)(
+			items(rnd.nextInt(items.size))
+		)
 }
