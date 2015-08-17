@@ -13,7 +13,7 @@ case class Leaf(predict: Vec) extends BinaryTree
 case class Node(left: BinaryTree, right: BinaryTree, feature: Int, split: Double) extends BinaryTree
 
 case class RandomTree(
-	numAttributes: Option[Int] = None,
+	numFeatures: Option[Int] = None,
 	maxDepth: Option[Int] = None,
 	minParent: Int = 1,
 	seed: Long = Random.nextLong
@@ -32,10 +32,21 @@ case class RandomTree(
 
 		def randomFeaturePick = {
 			val range = 0 until data.featureCount
-			numAttributes match {
+			numFeatures match {
 				case Some(limit) => Util.randomSubset(range, limit, rand)
 				case _ => range
 			}
+		}
+
+		/*
+			Compute the entropy of a distribution.
+		 */
+
+		def entropy(v: Vec) = {
+			val total = sum(v)
+			sum(v.map( d =>
+				if (d == 0) 0 else d * math.log(d / total)
+			)) / total
 		}
 
 		/*
@@ -56,15 +67,7 @@ case class RandomTree(
 				l += row
 				r -= row
 
-				val sumL = sum(l)
-				val sumR = sum(r)
-				val score =
-					sum(l.map( d =>
-						if (d == 0) 0 else d * math.log(d / sumL)
-					)) / sumL + sum(r.map( d =>
-						if (d == 0) 0 else d * math.log(d / sumR)
-					)) / sumR
-
+				val score = entropy(l) + entropy(r)
 				if (score > bestScore) {
 					bestScore = score
 					best = data.xmat(sorted(i), feature) + data.xmat(sorted(i+1), feature)
