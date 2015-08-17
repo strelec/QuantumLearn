@@ -40,12 +40,14 @@ case class RandomTree(
 
 		/*
 			Compute the entropy of a distribution.
+
+			Unit is nats instead ob bits.
 		 */
 
 		def entropy(v: Vec) = {
 			val total = sum(v)
-			sum(v.map( d =>
-				if (d == 0) 0 else d * math.log(d / total)
+			math.log(total) - sum(v.map( d =>
+				if (d == 0) 0 else d * math.log(d)
 			)) / total
 		}
 
@@ -56,7 +58,7 @@ case class RandomTree(
 		 */
 
 		def bestSplitPoint(feature: Int, distribution: Vec): (Double, Double) = {
-			var bestScore = Double.NegativeInfinity
+			var bestScore = Double.PositiveInfinity
 			var best = 0.0
 
 			val sorted = indices.sortBy(data.xmat(_, feature))
@@ -68,12 +70,12 @@ case class RandomTree(
 				r -= row
 
 				val score = entropy(l) + entropy(r)
-				if (score > bestScore) {
+				if (score < bestScore) {
 					bestScore = score
 					best = data.xmat(sorted(i), feature) + data.xmat(sorted(i+1), feature)
 				}
 			}
-			best/2 -> -bestScore
+			best/2 -> bestScore
 		}
 
 		/*
