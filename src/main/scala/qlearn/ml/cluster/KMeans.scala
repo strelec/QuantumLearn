@@ -38,12 +38,10 @@ case class KMeans(k: Int, distance: Distance = EuclideanDistance, eps: Double = 
 			val updated = Mat.zeros[Double](k, data.featureCount)
 			val counts = Vec.zeros[Double](k)
 
-			// TODO: foreach
-			mat.r.map { row =>
+			mat.r.foreach { row =>
 				val index = closest(row)
 				updated(index, ::) += row.t
 				counts(index) += 1.0
-				0.0
 			}
 
 			updated.c /= counts
