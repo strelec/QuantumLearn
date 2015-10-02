@@ -4,19 +4,23 @@ import breeze.linalg.argmin
 import qlearn.dataset.{NominalBasic, Unlabeled}
 import qlearn.Types._
 import qlearn.loss.numerical.distance.{Distance, EuclideanDistance}
+import qlearn.strategies.{NoRecentImprovement, Stopping}
 import qlearn.util.Util
 import qlearn.ml.{Randomized, Clusterer}
 
 import scala.util.Random
 
 
-case class KMeans(k: Int, distance: Distance = EuclideanDistance, eps: Double = 10e-6, maxIterations: Int = 500, seed: Long = Random.nextLong) extends Clusterer with Randomized {
+case class KMeans(
+	k: Int,
+	distance: Distance = EuclideanDistance,
+	strategy: Stopping = NoRecentImprovement(5),
+	seed: Long = Random.nextLong
+) extends Clusterer with Randomized {
 
 	/*
 		This is the algoritm that performs k-means clustering via the iterative approach.
 
-		TODO:
-			* Store current best result to be returned
 	 */
 
 
@@ -34,7 +38,7 @@ case class KMeans(k: Int, distance: Distance = EuclideanDistance, eps: Double = 
 		def closest(p: Vec): Int =
 			argmin(distance(centroids, p))
 
-		Iterator.fill(maxIterations) {
+		val y = strategy.apply {
 			val updated = Mat.zeros[Double](k, data.featureCount)
 			val counts = Vec.zeros[Double](k)
 
@@ -48,13 +52,11 @@ case class KMeans(k: Int, distance: Distance = EuclideanDistance, eps: Double = 
 			val error = distance.total(centroids, updated)
 			centroids = updated
 
-			println(s"Error: $error")
-			error
-		}.sliding(4).takeWhile {
-			case Seq(prev, _, _, cur) => prev - cur > 4*eps
-		}.toVector
+			error -> { () =>
+				Vec.tabulate(data.recordCount)( i => closest(mat(i, ::).t) )
+			}
+		}
 
-		val y = Vec.tabulate(data.recordCount)( i => closest(mat(i, ::).t) )
 		NominalBasic('cluster, data, y, names(k))
 	}
 }
