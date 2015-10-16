@@ -9,7 +9,9 @@ object Util {
 
 	def printDoubleNicely(num: Double, places: Int = 8) = {
 		val str = s"%.${places - 1}f" format num take (places + 1)
-		if (str.startsWith("0.000") && num != 0 || str.startsWith("-0.000") || !str.contains('.')) {
+		if (str == "NaN") {
+			"_" * places
+		} else if (str.startsWith("0.000") && num != 0 || str.startsWith("-0.000") || !str.contains('.')) {
 			val Array(mant, rawExp) = s"%.${places}e" format num split "e\\+?"
 			val exp = rawExp.toInt
 
