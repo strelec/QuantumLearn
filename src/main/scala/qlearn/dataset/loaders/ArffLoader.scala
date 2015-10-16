@@ -1,84 +1,106 @@
 package qlearn.dataset.loaders
 
-import breeze.linalg.DenseMatrix
 import qlearn.Types.Mat
 import qlearn.dataset.Unlabeled
 
+/*
+	ARFF data file loader
+
+	Missing features:
+	* support for labeled datasets (figure out types)
+	* support for string and date columns
+	* support for sparse rows
+	* support for instance weights (this will probably never be implemented)
+
+ */
+
 object ArffLoader extends Loader {
-	/*
-		A few filters
-	 */
 
 	def removeComment(line: String) =
 		line.takeWhile(_ != '%')
 
 	def trimLine(line: String) = line.trim
 
-	def notEmptyLine(line: String) = line.nonEmpty
+	def isEmptyLine(line: String) = line.isEmpty
 
-	/*
-		Regexes
-	 */
 
 	object Regex {
-		private[this] val literal = "'?(.*?)'?"
+		// since the structure is really simple, there's no need to bother with parsers
 
-		private[this] val nominal = "\\{.*\\}"
+		private val literal = "'?(.*?)'?"
 
-		private[this] val kind = s"(real|numeric|$nominal)"
+		private val nominal = raw"\{\s*(.*?)\s*\}"
 
-		val name = s"(?i)@relation\\s+$literal\\s*".r
+		private val kind = raw"(real|numeric|integer|string|date|relational|$nominal)"
 
-		val attribute = s"(?i)@attribute\\s+$literal\\s+$kind".r
+		val name = raw"(?i)@relation\s+$literal\s*".r
+
+		val attribute = raw"(?i)@attribute\s+$literal\s+$kind".r
 	}
 
-	/*
-		Unlabeled dataset loader
-	 */
 
-	// TODO: handle space and unknown values (?) and nominal attributes
-	def parseLine(line: String) =
-		line.split(",").map(_.toDouble)
+	abstract class Type
+	object Num extends Type
+	case class Nom(opts: IndexedSeq[String]) extends Type {
+		val lookup = opts.zipWithIndex.toMap
+	}
 
-	def unlabeled(data: Iterator[String]) = {
-		val prepared = data.map(removeComment).map(trimLine).filter(notEmptyLine)
 
-		val name = prepared.next match {
+	def clean(data: Iterator[String]) =
+		data.map(removeComment).map(trimLine).filterNot(isEmptyLine)
+
+	def commaSplit(str: String) = str.split(raw"\s*,\s*")
+
+	def parseHeader(data: Iterator[String]) = {
+		val name = data.next match {
 			case Regex.name(name) => name
-			case line => throw new Exception(s"The dataset has to start with @relation, got instead: $line")
+			case line => throw ParseError(s"The dataset has to start with @relation, got instead: $line")
 		}
 
-		val attributes = Stream.continually(prepared.next).takeWhile(_ != "@data").map {
-			case Regex.attribute(name, kind) => (name, kind)
-			case line => throw new Exception(s"Proper attribute expected, got instead: $line")
+		val attributes = Stream.continually(data.next).takeWhile(_.toLowerCase != "@data").map {
+			case Regex.attribute(name, "real" | "numeric" | "integer", _) => name -> Num
+
+			case Regex.attribute(name, kind, null) =>
+				throw ParseError(s"An attribute $name of type $kind is currently unsupported.")
+
+			case Regex.attribute(name, _, kind) => name -> Nom(commaSplit(kind))
+
+			case line =>
+				throw ParseError(s"Proper attribute declaration expected, got instead: $line")
 		}.toVector
 
+		(name, attributes)
+	}
+
+	def parseLine(types: Vector[Type])(line: String) =
+		(commaSplit(line), types).zipped.map {
+			case ("?", _)   => Double.NaN
+			case (num, Num) => num.toDouble
+			case (value, nom: Nom) =>
+				nom.lookup.get(value) match {
+					case Some(pos) => pos.toDouble
+					case _ => throw ParseError(s"Undeclared nominal value: $value")
+				}
+		}
+
+	def unlabeled(data: Iterator[String]) = {
+		val cleaned = clean(data)
+		val (name, attributes) = parseHeader(cleaned)
+		val (names, types) = attributes.unzip
 
 		val matrix = {
-			val array = prepared.flatMap(parseLine).toArray
+			val array = cleaned.toArray.flatMap(parseLine(types)(_))
 			val cols = attributes.size
 			val rows = array.size / cols
 			new Mat(rows, cols, array, 0, cols, true)
 		}
-		val names = attributes.map(x => Symbol(x._1))
 
-		Unlabeled(matrix, names)
+		Unlabeled(matrix, names.map(Symbol.apply))
 	}
 
 	def labeled[Numerical](data: Iterator[String], attribute: String) = {
-		val prepared = data.map(removeComment).map(trimLine).filter(notEmptyLine)
-
-		val name = prepared.next match {
-			case Regex.name(name) => name
-			case line => throw new Exception(s"The dataset has to start with @relation, got instead: $line")
-		}
-
-		val attributes = Stream.continually(prepared.next).takeWhile(_ != "@data").map {
-			case Regex.attribute(name, kind) => (name, kind)
-			case line => throw new Exception(s"Proper attribute expected, got instead: $line")
-		}.toVector
-
-		// TODO: deduplicate code, extend
+		val cleaned = clean(data)
+		val (name, attributes) = parseHeader(cleaned)
 
 		???
 	}

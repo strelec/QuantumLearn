@@ -5,6 +5,10 @@ import scala.io.Source.fromFile
 import qlearn.dataset.{Labeled, Unlabeled}
 
 abstract class Loader {
+
+	case class ParseError(error: String) extends Exception(error)
+
+
 	def unlabeled(data: Iterator[String]): Unlabeled
 
 	def unlabeled(file: String): Unlabeled = unlabeled(fromFile(file).getLines)
