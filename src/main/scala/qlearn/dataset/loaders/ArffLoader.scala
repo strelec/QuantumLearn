@@ -89,7 +89,7 @@ object ArffLoader extends Loader {
 		val (names, types) = attributes.unzip
 
 		val matrix = {
-			val array = cleaned.toArray.flatMap(parseLine(types)(_))
+			val array = cleaned.flatMap(parseLine(types)).toArray
 			val cols = attributes.size
 			val rows = array.size / cols
 			new Mat(rows, cols, array, 0, cols, true)
