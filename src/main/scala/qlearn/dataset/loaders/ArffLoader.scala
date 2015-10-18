@@ -1,7 +1,10 @@
 package qlearn.dataset.loaders
 
-import qlearn.Types.Mat
-import qlearn.dataset.Unlabeled
+import qlearn.Types.{Vec, Mat}
+import qlearn.dataset.{Numerical, Unlabeled}
+import qlearn.loss.numerical.MeanSquaredLoss
+
+import scala.collection.mutable.ArrayBuffer
 
 /*
 	ARFF data file loader
@@ -61,7 +64,7 @@ object ArffLoader extends Loader {
 			case Regex.attribute(name, "real" | "numeric" | "integer", _) => name -> Num
 
 			case Regex.attribute(name, kind, null) =>
-				throw ParseError(s"An attribute $name of type $kind is currently unsupported.")
+				throw ParseError(s"An attribute $name of type $kind is currently unsupported")
 
 			case Regex.attribute(name, _, kind) => name -> Nom(commaSplit(kind))
 
@@ -83,25 +86,42 @@ object ArffLoader extends Loader {
 				}
 		}
 
+	def buildUnlabeled(it: Iterator[Double], names: Vector[String]) = {
+		val array = it.toArray
+		val cols = names.size
+		val rows = array.size / cols
+		val matrix = new Mat(rows, cols, array, 0, cols, true)
+		Unlabeled(matrix, names.map(Symbol.apply))
+	}
+
+
+
 	def unlabeled(data: Iterator[String]) = {
 		val cleaned = clean(data)
 		val (name, attributes) = parseHeader(cleaned)
 		val (names, types) = attributes.unzip
 
-		val matrix = {
-			val array = cleaned.flatMap(parseLine(types)).toArray
-			val cols = attributes.size
-			val rows = array.size / cols
-			new Mat(rows, cols, array, 0, cols, true)
-		}
-
-		Unlabeled(matrix, names.map(Symbol.apply))
+		val it = cleaned.flatMap(parseLine(types))
+		buildUnlabeled(it, names)
 	}
 
-	def labeled[Numerical](data: Iterator[String], attribute: String) = {
+	def labeled(data: Iterator[String], attribute: String) = {
 		val cleaned = clean(data)
 		val (name, attributes) = parseHeader(cleaned)
+		val (names, types) = attributes.unzip
 
-		???
+		val index = names.indexOf(attribute)
+		if (index == -1)
+			throw ParseError(s"The attribute $attribute was not found in the dataset")
+
+		val y = new ArrayBuffer[Double]
+		val it = cleaned.flatMap { line =>
+			val data = parseLine(types)(line)
+			y.append(data(index))
+			data.patch(index, Nil, 1)
+		}
+		val x = buildUnlabeled(it, names.patch(index, Nil, 1))
+
+		Numerical(Symbol(attribute), x, new Vec(y.toArray), MeanSquaredLoss)
 	}
 }

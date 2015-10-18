@@ -2,7 +2,7 @@ package qlearn.dataset.loaders
 
 import scala.io.Source.fromFile
 
-import qlearn.dataset.{Labeled, Unlabeled}
+import qlearn.dataset.{Numerical, Labeled, Unlabeled}
 
 abstract class Loader {
 
@@ -14,7 +14,7 @@ abstract class Loader {
 	def unlabeled(file: String): Unlabeled = unlabeled(fromFile(file).getLines)
 
 
-	def labeled[T <: Labeled[T]](data: Iterator[String], attribute: String): T
+	def labeled(data: Iterator[String], attribute: String): Numerical
 
-	def labeled[T <: Labeled[T]](file: String, attribute: String): T = labeled(fromFile(file).getLines, attribute)
+	def labeled(file: String, attribute: String): Numerical = labeled(fromFile(file).getLines, attribute)
 }
