@@ -1,4 +1,4 @@
-package qlearn.wekas.cluster
+package qlearn.ml.cluster.weka
 
 import qlearn.ml.Randomized
 import qlearn.wekas.WekaClusterer

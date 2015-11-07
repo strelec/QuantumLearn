@@ -1,8 +1,8 @@
-package qlearn.wekas.cluster
+package qlearn.ml.cluster.weka
 
-import qlearn.loss.numerical.distance.{EuclideanDistance, Distance}
+import qlearn.loss.numerical.distance.{Distance, EuclideanDistance}
 import qlearn.ml.Randomized
-import qlearn.wekas.{WekaDistance, WekaClusterer}
+import qlearn.wekas.WekaClusterer
 import weka.clusterers.SimpleKMeans
 
 import scala.util.Random

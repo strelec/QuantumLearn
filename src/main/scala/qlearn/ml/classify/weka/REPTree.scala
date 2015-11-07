@@ -1,4 +1,4 @@
-package qlearn.wekas.classify
+package qlearn.ml.classify.weka
 
 import qlearn.dataset.Nominal
 import qlearn.ml.Randomized

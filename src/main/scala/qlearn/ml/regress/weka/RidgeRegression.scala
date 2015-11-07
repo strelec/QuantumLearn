@@ -1,4 +1,4 @@
-package qlearn.wekas.regress
+package qlearn.ml.regress.weka
 
 import qlearn.dataset.Numerical
 import qlearn.wekas.WekaModel
