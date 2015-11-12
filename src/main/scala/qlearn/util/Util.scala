@@ -1,5 +1,7 @@
 package qlearn.util
 
+import qlearn.Types.Vec
+
 import scala.util.Random
 
 object Util {
@@ -38,4 +40,14 @@ object Util {
 		Vector.fill(k)(
 			items(rnd.nextInt(items.size))
 		)
+
+
+	def kSmallestIndices(items: Vec, k: Int): IndexedSeq[Int] = {
+		val vec = items.toScalaVector
+		vec.indices.sortBy(vec).take(k)
+	}
+
+	def kthSmallestElement(items: Vec, k: Int): Double = {
+		???
+	}
 }

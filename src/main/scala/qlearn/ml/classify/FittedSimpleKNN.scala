@@ -5,6 +5,7 @@ import qlearn.Types._
 import qlearn.dataset.{Nominal, Unlabeled}
 import qlearn.loss.numerical.distance.{EuclideanDistance, Distance}
 import qlearn.ml.FittedModel
+import qlearn.util.Util
 
 case class FittedSimpleKNN(
 	schema: Nominal,
@@ -27,22 +28,10 @@ case class FittedSimpleKNN(
 
 	require(k <= schema.recordCount, s"Cannot run $k-NN classifier on a dataset with just ${schema.recordCount} records.")
 
-	/*
-		This function returns the indices of k smallest
-		elements of a vector.
-
-		TODO: Sorting is slow, rewrite to MoM algorithm.
-	 */
-
-	private def kSmallest(distances: Vec, k: Int) = {
-		val vec = distances.toScalaVector
-		vec.indices.sortBy(vec).take(k)
-	}
-
 	def predict(data: Unlabeled) = {
 		val newy = data.xmat.r.map { record =>
 			val distances = distance(schema.xmat, record)
-			val smallest = kSmallest(distances, k)
+			val smallest = Util.kSmallestIndices(distances, k)
 
 			// select k smallest distances and weight them
 			val weighted = distances(smallest).map(weighting)
