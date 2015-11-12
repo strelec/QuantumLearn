@@ -1,18 +1,18 @@
 package qlearn.ml.meta
 
-import qlearn.dataset.Nominal
+import qlearn.dataset.SingleLabeled
 import qlearn.ml.{Model, Randomized}
 import qlearn.util.Util
 
 import scala.util.Random
 
-case class Bagging(
-	learners: Seq[Model[Nominal]],
+case class Bagging[T <: SingleLabeled[T]](
+	learners: Seq[Model[T]],
 	bagSizePercentage: Double = 100,
 	seed: Long = Random.nextLong
-) extends Model[Nominal] with Randomized {
+) extends Model[T] with Randomized {
 
-	def fit(data: Nominal) = {
+	def fit(data: T) = {
 		val rand = getRandom
 		val bagSize = (bagSizePercentage * data.recordCount / 100).round.toInt
 
@@ -26,6 +26,6 @@ case class Bagging(
 }
 
 object Bagging {
-	def apply(learner: Model[Nominal], iterations: Int): Bagging =
+	def apply[T <: SingleLabeled[T]](learner: Model[T], iterations: Int): Bagging[T] =
 		Bagging(Seq.fill(iterations)(learner))
 }
