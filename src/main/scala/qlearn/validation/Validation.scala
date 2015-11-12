@@ -3,7 +3,7 @@ package qlearn.validation
 import qlearn.dataset._
 import qlearn.ml.Model
 
-abstract class Validation[T <: SingleLabeled[T]] {
+abstract class Validation[T <: Labeled[T]] {
 	def data: T
 
 	// TODO: ugliest hack in the world

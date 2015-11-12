@@ -3,8 +3,7 @@ package qlearn.validation
 import qlearn.dataset.{SingleLabeled, Nominal, Labeled}
 import qlearn.ml.Model
 
-// TODO: is this labeled?
-case class CrossValidation[T <: SingleLabeled[T]](data: T, folds: Int = 10, stratify: Boolean = true) extends Validation[T] {
+case class CrossValidation[T <: Labeled[T]](data: T, folds: Int = 10, stratify: Boolean = true) extends Validation[T] {
 
 	/*
 		This is a special, very optimized k-fold cross validation engine.
