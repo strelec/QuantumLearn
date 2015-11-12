@@ -4,7 +4,7 @@ import qlearn.dataset.{MultiLabeled, SingleLabeled}
 
 import scala.util.Random
 
-abstract class Model[T <: SingleLabeled[T]] {
+abstract class Model[T] {
 
 	/*
 		Models that want to report their learning status back to the user
@@ -19,5 +19,5 @@ abstract class Model[T <: SingleLabeled[T]] {
 
 	def fit(data: T): FittedModel[T]
 
-	def fit(data: MultiLabeled[T]): FittedModel[MultiLabeled[T]] = FittedModelMulti(data, data.ys.map(fit))
+	//def fit(data: MultiLabeled[T]): FittedModel[MultiLabeled[T]] = FittedModelMulti(data, data.ys.map(fit))
 }

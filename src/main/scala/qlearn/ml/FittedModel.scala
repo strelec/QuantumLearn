@@ -3,7 +3,7 @@ package qlearn.ml
 import qlearn.dataset.{Labeled, Unlabeled}
 
 
-abstract class FittedModel[T <: Labeled[T]] {
+abstract class FittedModel[T] {
 
 	/*
 		We keep the reference to the learning dataset just to know the schema

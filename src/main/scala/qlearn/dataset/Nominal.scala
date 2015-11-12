@@ -41,7 +41,7 @@ abstract class Nominal extends SingleLabeled[Nominal] with Product with Serializ
 }
 
 object Nominal {
-	def apply(name: Symbol, x: Unlabeled, y: Seq[String], loss: Loss[_ >: Nominal] = CrossEntropyLoss()): NominalBasic = {
+	def apply(name: Symbol, x: Unlabeled, y: Seq[String], loss: Loss[Nominal] = CrossEntropyLoss()): NominalBasic = {
 		val names = y.distinct.toVector.sorted
 		val lookup = names.zipWithIndex.toMap
 

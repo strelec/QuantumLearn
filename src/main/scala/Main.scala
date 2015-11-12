@@ -29,14 +29,15 @@ object Main extends App {
 	val l3 = MultiLabeled(l1, l2, lb)
 	l3.report
 
-	LogisticRegression().fit(l3).predict(ul).report
-	REPTree().fit(l3).predict(ul).report
+	//LogisticRegression().fit(l3).predict(ul).report
+	//REPTree().fit(l3).predict(ul).report
 	RandomTree(minParent = 5).fit(l1).predict(ul).report
+
 	val mdls = Seq.fill(300)(RandomTree(minParent = 1))
 	Bagging(mdls).fit(l1).predict(ul).report
 
-	RidgeRegression(ridge = 0.0).fit(ln).predict(ul).report
-	ml.regress.weka.RidgeRegression(ridge = 0.0).fit(ln).predict(ul).report
+	//RidgeRegression(ridge = 0.0).fit(ln).predict(ul).report
+	//ml.regress.weka.RidgeRegression(ridge = 0.0).fit(ln).predict(ul).report
 
 	println(CrossValidation[Nominal](l1).validate(LogisticRegression()))
 	println(SameDatasetValidation[Nominal](l1).validate(SimpleKNN(5)))

@@ -5,7 +5,7 @@ import qlearn.loss.Loss
 import qlearn.loss.nominal.CrossEntropyLoss
 import qlearn.util.Util
 
-case class NominalFull(name: Symbol, x: Unlabeled, ymat: Mat, names: Vector[String], loss: Loss[_ >: NominalFull] = CrossEntropyLoss()) extends Nominal {
+case class NominalFull(name: Symbol, x: Unlabeled, ymat: Mat, names: Vector[String], loss: Loss[Nominal] = CrossEntropyLoss()) extends Nominal {
 
 	def updated(xnew: Unlabeled, ynew: Mat): NominalFull = {
 		assert(ynew.cols == names.size)

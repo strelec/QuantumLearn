@@ -7,7 +7,7 @@ import qlearn.loss.nominal.CrossEntropyLoss
 import qlearn.util
 import qlearn.util.Util
 
-case class NominalBasic(name: Symbol, x: Unlabeled, override val y: IntVec, names: Vector[String], loss: Loss[_ >: Nominal] = CrossEntropyLoss()) extends Nominal {
+case class NominalBasic(name: Symbol, x: Unlabeled, override val y: IntVec, names: Vector[String], loss: Loss[Nominal] = CrossEntropyLoss()) extends Nominal {
 
 	lazy val ymat =
 		Mat.tabulate(y.size, names.size) { (r, c) =>

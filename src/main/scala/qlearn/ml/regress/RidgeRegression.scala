@@ -21,6 +21,6 @@ case class RidgeRegression(ridge: Double = 0) extends Model[Numerical] {
 	def fit(data: Numerical) =
 		FittedRidgeRegression(data, inverse(data) * data.ymat)
 
-	override def fit(data: MultiLabeled[Numerical]) =
-		FittedRidgeRegressionMulti(data, inverse(data) * data.ymat)
+	/*override def fit(data: MultiLabeled[Numerical]) =
+		FittedRidgeRegressionMulti(data, inverse(data) * data.ymat)*/
 }

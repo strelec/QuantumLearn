@@ -6,7 +6,7 @@ import qlearn.loss.numerical.MeanSquaredLoss
 import qlearn.util.Util
 import weka.core.{Attribute, Instances}
 
-case class Numerical(name: Symbol, x: Unlabeled, y: Vec, loss: Loss[_ >: Numerical]) extends SingleLabeled[Numerical] {
+case class Numerical(name: Symbol, x: Unlabeled, y: Vec, loss: Loss[Numerical]) extends SingleLabeled[Numerical] {
 	lazy val ymat = y.toDenseMatrix.t
 
 	val width = 1
@@ -42,6 +42,6 @@ case class Numerical(name: Symbol, x: Unlabeled, y: Vec, loss: Loss[_ >: Numeric
 }
 
 object Numerical {
-	def apply(name: Symbol, x: Unlabeled, y: Seq[Double], loss: Loss[_ >: Numerical] = MeanSquaredLoss): Numerical =
+	def apply(name: Symbol, x: Unlabeled, y: Seq[Double], loss: Loss[Numerical] = MeanSquaredLoss): Numerical =
 		Numerical(name, x, Vec(y: _*), loss)
 }
