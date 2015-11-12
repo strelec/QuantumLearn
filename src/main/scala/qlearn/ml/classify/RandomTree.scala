@@ -3,7 +3,7 @@ package qlearn.ml.classify
 import breeze.linalg.sum
 import qlearn.Types._
 import qlearn.dataset.Nominal
-import qlearn.ml.{Randomized, Model}
+import qlearn.ml.{RandomizedModel, Model}
 import qlearn.util.Util
 
 import scala.util.Random
@@ -15,9 +15,8 @@ case class Node(left: BinaryTree, right: BinaryTree, feature: Int, split: Double
 case class RandomTree(
 	numFeatures: Option[Int] = None,
 	maxDepth: Option[Int] = None,
-	minParent: Int = 1,
-	seed: Long = Random.nextLong
-) extends Model[Nominal] with Randomized {
+	minParent: Int = 1
+) extends Model[Nominal] with RandomizedModel[Nominal] {
 
 	require(minParent >= 1)
 
@@ -107,7 +106,7 @@ case class RandomTree(
 		}
 	}
 
-	def fit(data: Nominal) = FittedRandomTree(
-		data, recurse(data, data.indices.toVector, getRandom)
+	def fit(data: Nominal, seed: Long) = FittedRandomTree(
+		data, recurse(data, data.indices.toVector, new Random(seed))
 	)
 }

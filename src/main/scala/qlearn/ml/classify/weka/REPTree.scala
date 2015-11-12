@@ -1,7 +1,7 @@
 package qlearn.ml.classify.weka
 
 import qlearn.dataset.Nominal
-import qlearn.ml.Randomized
+import qlearn.ml.RandomizedModel
 import qlearn.wekas.WekaModel
 import weka.classifiers.trees
 
@@ -12,7 +12,7 @@ case class REPTree(
 	minInstancesPerLeaf: Int = 2,
 	pruning: Boolean = true,
 	seed: Long = Random.nextLong
-) extends WekaModel[Nominal](new trees.REPTree) with Randomized {
+) extends WekaModel[Nominal](new trees.REPTree) {
 
 	val m = model.asInstanceOf[trees.REPTree]
 
