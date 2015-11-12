@@ -4,7 +4,7 @@ import qlearn.Types.Mat
 import qlearn.loss.Loss
 import qlearn.util.Util
 
-case class MultiLabeled[T <: SingleLabeled[T]](ys: T*) extends Labeled[MultiLabeled[T]] {
+case class MultiLabeled[+T <: SingleLabeled[T]](ys: T*) extends Labeled[MultiLabeled[T]] {
 	require(ys.nonEmpty, "Specify at least one dataset.")
 
 	val x = ys.head.x
@@ -30,7 +30,7 @@ case class MultiLabeled[T <: SingleLabeled[T]](ys: T*) extends Labeled[MultiLabe
 
 	override def toString = {
 		val labels = ys.map(_.name.name) mkString ", "
-		s"Multi(${x.labelString}, $labels})"
+		s"Multi(${x.labelString}, $labels)"
 	}
 
 	/*
