@@ -1,6 +1,6 @@
 name := "QuantumLearn"
 
-version := "0.1"
+version := "0.1.5"
 
 scalaVersion := "2.11.7"
 
@@ -11,7 +11,7 @@ libraryDependencies  ++= Seq(
 	"org.scalanlp" %% "breeze-natives" % "0.12-SNAPSHOT",
 
 	// weka
-	"nz.ac.waikato.cms.weka" % "weka-dev" % "3.7.12"
+	"nz.ac.waikato.cms.weka" % "weka-dev" % "3.7.13"
 )
 
 resolvers ++= Seq(
