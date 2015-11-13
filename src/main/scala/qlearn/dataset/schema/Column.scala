@@ -1,5 +1,5 @@
 package qlearn.dataset.schema
 
-abstract class Schema {
+abstract class Column {
 	val name: String
 }

@@ -1,7 +1,7 @@
 package qlearn.dataset.loaders
 
 import qlearn.Types.{Vec, Mat}
-import qlearn.dataset.schema.{Schema, NominalSchema, NumericalSchema}
+import qlearn.dataset.schema.{Column, NominalColumn, NumericalColumn}
 import qlearn.dataset.{Numerical, Unlabeled}
 import qlearn.loss.numerical.MeanSquaredLoss
 
@@ -57,12 +57,12 @@ object ArffLoader extends Loader {
 		}
 
 		val attributes = Stream.continually(data.next).takeWhile(_.toLowerCase != "@data").map {
-			case Regex.attribute(name, "real" | "numeric" | "integer", _) => NumericalSchema(name)
+			case Regex.attribute(name, "real" | "numeric" | "integer", _) => NumericalColumn(name)
 
 			case Regex.attribute(name, kind, null) =>
 				throw ParseError(s"An attribute $name of type $kind is currently unsupported")
 
-			case Regex.attribute(name, _, kind) => NominalSchema(name, commaSplit(kind))
+			case Regex.attribute(name, _, kind) => NominalColumn(name, commaSplit(kind))
 
 			case line =>
 				throw ParseError(s"Proper attribute declaration expected, got instead: $line")
@@ -71,11 +71,11 @@ object ArffLoader extends Loader {
 		(name, attributes)
 	}
 
-	def parseLine(types: Vector[Schema])(line: String) =
+	def parseLine(types: Vector[Column])(line: String) =
 		(commaSplit(line), types).zipped.map {
 			case ("?", _)   => Double.NaN
-			case (value, col: NumericalSchema) => value.toDouble
-			case (value, col: NominalSchema) =>
+			case (value, col: NumericalColumn) => value.toDouble
+			case (value, col: NominalColumn) =>
 				col.lookup.get(value) match {
 					case Some(pos) => pos.toDouble
 					case _ => throw ParseError(s"Undeclared nominal value: $value")
