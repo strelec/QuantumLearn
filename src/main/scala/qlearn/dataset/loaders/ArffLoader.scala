@@ -1,6 +1,7 @@
 package qlearn.dataset.loaders
 
 import qlearn.Types.{Vec, Mat}
+import qlearn.dataset.schema.{Schema, NominalSchema, NumericalSchema}
 import qlearn.dataset.{Numerical, Unlabeled}
 import qlearn.loss.numerical.MeanSquaredLoss
 
@@ -27,6 +28,7 @@ object ArffLoader extends Loader {
 	def isEmptyLine(line: String) = line.isEmpty
 
 
+
 	object Regex {
 		// since the structure is really simple, there's no need to bother with parsers
 
@@ -42,12 +44,6 @@ object ArffLoader extends Loader {
 	}
 
 
-	abstract class Type
-	object Num extends Type
-	case class Nom(opts: IndexedSeq[String]) extends Type {
-		val lookup = opts.zipWithIndex.toMap
-	}
-
 
 	def clean(data: Iterator[String]) =
 		data.map(removeComment).map(trimLine).filterNot(isEmptyLine)
@@ -61,12 +57,12 @@ object ArffLoader extends Loader {
 		}
 
 		val attributes = Stream.continually(data.next).takeWhile(_.toLowerCase != "@data").map {
-			case Regex.attribute(name, "real" | "numeric" | "integer", _) => name -> Num
+			case Regex.attribute(name, "real" | "numeric" | "integer", _) => NumericalSchema(name)
 
 			case Regex.attribute(name, kind, null) =>
 				throw ParseError(s"An attribute $name of type $kind is currently unsupported")
 
-			case Regex.attribute(name, _, kind) => name -> Nom(commaSplit(kind))
+			case Regex.attribute(name, _, kind) => NominalSchema(name, commaSplit(kind))
 
 			case line =>
 				throw ParseError(s"Proper attribute declaration expected, got instead: $line")
@@ -75,12 +71,12 @@ object ArffLoader extends Loader {
 		(name, attributes)
 	}
 
-	def parseLine(types: Vector[Type])(line: String) =
+	def parseLine(types: Vector[Schema])(line: String) =
 		(commaSplit(line), types).zipped.map {
 			case ("?", _)   => Double.NaN
-			case (num, Num) => num.toDouble
-			case (value, nom: Nom) =>
-				nom.lookup.get(value) match {
+			case (value, col: NumericalSchema) => value.toDouble
+			case (value, col: NominalSchema) =>
+				col.lookup.get(value) match {
 					case Some(pos) => pos.toDouble
 					case _ => throw ParseError(s"Undeclared nominal value: $value")
 				}
@@ -98,17 +94,17 @@ object ArffLoader extends Loader {
 
 	def unlabeled(data: Iterator[String]) = {
 		val cleaned = clean(data)
-		val (name, attributes) = parseHeader(cleaned)
-		val (names, types) = attributes.unzip
+		val (name, columns) = parseHeader(cleaned)
+		val names = columns.map(_.name)
 
-		val it = cleaned.flatMap(parseLine(types))
+		val it = cleaned.flatMap(parseLine(columns))
 		buildUnlabeled(it, names)
 	}
 
 	def labeled(data: Iterator[String], attribute: String) = {
 		val cleaned = clean(data)
-		val (name, attributes) = parseHeader(cleaned)
-		val (names, types) = attributes.unzip
+		val (name, columns) = parseHeader(cleaned)
+		val names = columns.map(_.name)
 
 		val index = names.indexOf(attribute)
 		if (index == -1)
@@ -116,7 +112,7 @@ object ArffLoader extends Loader {
 
 		val y = new ArrayBuffer[Double]
 		val it = cleaned.flatMap { line =>
-			val data = parseLine(types)(line)
+			val data = parseLine(columns)(line)
 			y.append(data(index))
 			data.patch(index, Nil, 1)
 		}
