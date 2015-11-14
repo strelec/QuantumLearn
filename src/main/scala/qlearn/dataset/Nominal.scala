@@ -45,6 +45,6 @@ object Nominal {
 		val values = y.distinct.toVector
 		val lookup = values.zipWithIndex.toMap
 
-		NominalBasic(x, Vec.tabulate(y.size)(y andThen lookup), NominalColumn(name, values), loss)
+		NominalBasic(x, Vec.tabulate(y.size)(y andThen lookup), NominalColumn(name, values, loss))
 	}
 }

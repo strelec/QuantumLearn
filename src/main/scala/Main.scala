@@ -26,8 +26,8 @@ object Main extends App {
 	FittedSimpleKNN(l1, k = 3).predict(ul).report
 
 
-	val l3 = MultiLabeled(l1, l2, lb)
-	l3.report
+	//val l3 = MultiLabeled(l1, l2, lb)
+	//l3.report
 
 	//LogisticRegression().fit(l3).predict(ul).report
 	//REPTree().fit(l3).predict(ul).report

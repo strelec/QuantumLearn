@@ -118,6 +118,6 @@ object ArffLoader extends Loader {
 		}
 		val x = buildUnlabeled(it, names.patch(index, Nil, 1))
 
-		Numerical(x, new Vec(y.toArray), NumericalColumn(attribute), MeanSquaredLoss)
+		Numerical(x, new Vec(y.toArray), NumericalColumn(attribute))
 	}
 }

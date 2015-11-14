@@ -2,11 +2,9 @@ package qlearn.dataset
 
 import qlearn.Types._
 import qlearn.dataset.schema.NominalColumn
-import qlearn.loss.Loss
-import qlearn.loss.nominal.CrossEntropyLoss
 import qlearn.util.Util
 
-case class NominalFull(x: Unlabeled, ymat: Mat, schema: NominalColumn, loss: Loss[Nominal] = CrossEntropyLoss()) extends Nominal {
+case class NominalFull(x: Unlabeled, ymat: Mat, schema: NominalColumn) extends Nominal {
 
 	def values = schema.values
 

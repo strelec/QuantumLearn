@@ -7,7 +7,7 @@ import qlearn.loss.binary.LogisticLoss
 import qlearn.loss.nominal.CrossEntropyLoss
 import qlearn.util.Util
 
-case class Binary(x: Unlabeled, yb: Vec, schema: BinaryColumn, loss: Loss[Binary]) extends Nominal {
+case class Binary(x: Unlabeled, yb: Vec, schema: BinaryColumn) extends Nominal {
 
 	val values = Vector("no", "yes")
 
@@ -40,6 +40,6 @@ object Binary {
 	def apply(name: Symbol, x: Unlabeled, seq: Seq[Boolean], loss: Loss[Binary] = LogisticLoss): Binary = {
 		Binary(x, Vec(seq.map { v =>
 			if (v) 1.0 else 0.0
-		}: _*), BinaryColumn(name), loss)
+		}: _*), BinaryColumn(name, loss))
 	}
 }

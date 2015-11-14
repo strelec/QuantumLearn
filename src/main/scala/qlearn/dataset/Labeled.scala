@@ -1,6 +1,7 @@
 package qlearn.dataset
 
 import qlearn.Types.Mat
+import qlearn.dataset.schema.Column
 import qlearn.loss.Loss
 
 import scala.util.Random
@@ -8,6 +9,7 @@ import scala.util.Random
 abstract class Labeled[+T <: Labeled[T]] {
 	def x: Unlabeled
 	def xmat = x.xmat
+	val schema: Column
 
 	def recordCount = x.recordCount
 	def featureCount = x.featureCount
@@ -16,16 +18,6 @@ abstract class Labeled[+T <: Labeled[T]] {
 
 	// TODO
 	//require(ymat.rows == xmat.rows, "Both X and Y have to have the same number of rows")
-
-	// TODO: this should be here to avoid the ugly hack
-	//type TT <: T
-	//type Q >: TT
-
-	//def loss: Loss[Q]
-
-
-	//def loss[Q >: T]: Loss[Q]
-	//def loss: Loss[_ >: T]
 
 	def width: Int
 

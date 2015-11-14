@@ -12,7 +12,7 @@ case class OneVsAll(learner: Model[Binary]) extends Model[Nominal] {
 			val yb = data.y.map { v =>
 				if (v == klass) 1.0 else 0.0
 			}
-			Binary(data.x, yb, BinaryColumn(data.name), LogisticLoss)
+			Binary(data.x, yb, BinaryColumn(data.name))
 		}
 
 	def fit(data: Nominal) =

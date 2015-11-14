@@ -3,12 +3,8 @@ package qlearn.dataset
 import breeze.linalg.argmax
 import qlearn.Types._
 import qlearn.dataset.schema.NominalColumn
-import qlearn.loss.Loss
-import qlearn.loss.nominal.CrossEntropyLoss
-import qlearn.util
-import qlearn.util.Util
 
-case class NominalBasic(x: Unlabeled, override val y: IntVec, schema: NominalColumn, loss: Loss[Nominal] = CrossEntropyLoss()) extends Nominal {
+case class NominalBasic(x: Unlabeled, override val y: IntVec, schema: NominalColumn) extends Nominal {
 
 	def values = schema.values
 
