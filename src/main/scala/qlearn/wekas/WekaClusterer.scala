@@ -1,5 +1,6 @@
 package qlearn.wekas
 
+import qlearn.dataset.schema.NominalColumn
 import qlearn.dataset.{NominalBasic, Unlabeled}
 import qlearn.Types.Vec
 import qlearn.loss.numerical.distance._
@@ -39,7 +40,7 @@ class WekaClusterer(val clusterer: ClustererW) extends Clusterer {
 		)
 
 		val k = copy.numberOfClusters
-		NominalBasic('cluster, data, y, names(k))
+		NominalBasic(data, y, NominalColumn('cluster, names(k)))
 	}
 
 	override def toString = s"Weka${clusterer.getClass.getSimpleName}()"

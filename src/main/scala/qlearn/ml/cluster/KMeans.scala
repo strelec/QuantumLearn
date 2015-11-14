@@ -1,6 +1,7 @@
 package qlearn.ml.cluster
 
 import breeze.linalg.argmin
+import qlearn.dataset.schema.NominalColumn
 import qlearn.dataset.{NominalBasic, Unlabeled}
 import qlearn.Types._
 import qlearn.loss.numerical.distance.{Distance, EuclideanDistance}
@@ -56,6 +57,6 @@ case class KMeans(
 			}
 		}
 
-		NominalBasic('cluster, data, y, names(k))
+		NominalBasic(data, y, NominalColumn('cluster, names(k)))
 	}
 }

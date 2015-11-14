@@ -2,25 +2,25 @@ package qlearn.dataset
 
 import breeze.linalg.argmax
 import qlearn.Types._
+import qlearn.dataset.schema.NominalColumn
 import qlearn.loss.Loss
 import qlearn.loss.nominal.CrossEntropyLoss
 import qlearn.util
 import qlearn.util.Util
 
-case class NominalBasic(name: Symbol, x: Unlabeled, override val y: IntVec, names: Vector[String], loss: Loss[Nominal] = CrossEntropyLoss()) extends Nominal {
+case class NominalBasic(x: Unlabeled, override val y: IntVec, schema: NominalColumn, loss: Loss[Nominal] = CrossEntropyLoss()) extends Nominal {
+
+	def values = schema.values
 
 	lazy val ymat =
-		Mat.tabulate(y.size, names.size) { (r, c) =>
+		Mat.tabulate(y.size, values.size) { (r, c) =>
 			if (y(r) == c) 1.0 else 0.0
 		}
 
-	def updated(xnew: Unlabeled, ynew: Mat): NominalFull = {
-		assert(ynew.cols == names.size)
-		NominalFull(name, xnew, ynew, names, loss)
-	}
+	def updated(xnew: Unlabeled, ynew: Mat) = schema.populate(xnew, ynew)
 
 	def updatedSame(xnew: Unlabeled, ynew: Mat): NominalBasic = {
-		assert(ynew.cols == names.size)
+		assert(ynew.cols == values.size)
 		copy(x = xnew, y = argmax(ynew.r))
 	}
 
@@ -29,10 +29,10 @@ case class NominalBasic(name: Symbol, x: Unlabeled, override val y: IntVec, name
 	 */
 
 	lazy val reportHeader = {
-		val len = names.map(_.size).max
+		val len = values.map(_.size).max
 		Seq(s"%${len}s" format name.name)
 	}
 
 	def reportLine(line: Int) =
-		Seq(names(y(line)).padTo(reportHeader.head.size, ' '))
+		Seq(values(y(line)).padTo(reportHeader.head.size, ' '))
 }

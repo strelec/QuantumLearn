@@ -1,16 +1,16 @@
 package qlearn.dataset
 
 import qlearn.Types._
+import qlearn.dataset.schema.NominalColumn
 import qlearn.loss.Loss
 import qlearn.loss.nominal.CrossEntropyLoss
 import qlearn.util.Util
 
-case class NominalFull(name: Symbol, x: Unlabeled, ymat: Mat, names: Vector[String], loss: Loss[Nominal] = CrossEntropyLoss()) extends Nominal {
+case class NominalFull(x: Unlabeled, ymat: Mat, schema: NominalColumn, loss: Loss[Nominal] = CrossEntropyLoss()) extends Nominal {
 
-	def updated(xnew: Unlabeled, ynew: Mat): NominalFull = {
-		assert(ynew.cols == names.size)
-		copy(x = xnew, ymat = ynew)
-	}
+	def values = schema.values
+
+	def updated(xnew: Unlabeled, ynew: Mat) = schema.populate(xnew, ynew)
 
 
 	/*
@@ -18,7 +18,7 @@ case class NominalFull(name: Symbol, x: Unlabeled, ymat: Mat, names: Vector[Stri
 		*/
 
 	lazy val reportHeader =
-		names.map(x =>
+		values.map(x =>
 			"%9s" format s"${name.name}=$x"
 		)
 

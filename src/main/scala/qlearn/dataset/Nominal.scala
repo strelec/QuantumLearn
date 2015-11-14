@@ -1,17 +1,17 @@
 package qlearn.dataset
 
 import qlearn.Types._
+import qlearn.dataset.schema.NominalColumn
 import qlearn.loss.Loss
 import qlearn.loss.nominal.CrossEntropyLoss
 import weka.core.{Attribute, Instances}
 
 abstract class Nominal extends SingleLabeled[Nominal] with Product with Serializable {
-	val name: Symbol
 	val x: Unlabeled
 	val ymat: Mat
-	val names: Vector[String]
+	def values: Vector[String]
 
-	def width = names.size
+	def width = values.size
 
 	val y: IntVec =
 		Vec.tabulate(recordCount) { i =>
@@ -29,11 +29,11 @@ abstract class Nominal extends SingleLabeled[Nominal] with Product with Serializ
 		val pos = data.numAttributes
 
 		import collection.JavaConversions._
-		data.insertAttributeAt(new Attribute("output", names), pos)
+		data.insertAttributeAt(new Attribute("output", values), pos)
 		data.setClassIndex(pos)
 
 		indices.foreach { i =>
-			data.instance(i).setValue(pos, names(y(i)))
+			data.instance(i).setValue(pos, values(y(i)))
 		}
 
 		data
@@ -42,9 +42,9 @@ abstract class Nominal extends SingleLabeled[Nominal] with Product with Serializ
 
 object Nominal {
 	def apply(name: Symbol, x: Unlabeled, y: Seq[String], loss: Loss[Nominal] = CrossEntropyLoss()): NominalBasic = {
-		val names = y.distinct.toVector.sorted
-		val lookup = names.zipWithIndex.toMap
+		val values = y.distinct.toVector
+		val lookup = values.zipWithIndex.toMap
 
-		NominalBasic(name, x, Vec.tabulate(y.size)(y andThen lookup), names, loss)
+		NominalBasic(x, Vec.tabulate(y.size)(y andThen lookup), NominalColumn(name, values), loss)
 	}
 }

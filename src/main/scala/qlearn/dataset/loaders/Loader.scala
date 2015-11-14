@@ -14,7 +14,7 @@ abstract class Loader {
 	def unlabeled(file: String): Unlabeled = unlabeled(fromFile(file).getLines)
 
 
-	def labeled(data: Iterator[String], attribute: String): Numerical
+	def labeled(data: Iterator[String], attribute: Symbol): Numerical
 
-	def labeled(file: String, attribute: String): Numerical = labeled(fromFile(file).getLines, attribute)
+	def labeled(file: String, attribute: Symbol): Numerical = labeled(fromFile(file).getLines, attribute)
 }

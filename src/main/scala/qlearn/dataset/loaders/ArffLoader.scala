@@ -48,7 +48,7 @@ object ArffLoader extends Loader {
 	def clean(data: Iterator[String]) =
 		data.map(removeComment).map(trimLine).filterNot(isEmptyLine)
 
-	def commaSplit(str: String) = str.split(raw"\s*,\s*")
+	def commaSplit(str: String) = str.split(raw"\s*,\s*").toVector
 
 	def parseHeader(data: Iterator[String]) = {
 		val name = data.next match {
@@ -57,12 +57,12 @@ object ArffLoader extends Loader {
 		}
 
 		val attributes = Stream.continually(data.next).takeWhile(_.toLowerCase != "@data").map {
-			case Regex.attribute(name, "real" | "numeric" | "integer", _) => NumericalColumn(name)
+			case Regex.attribute(name, "real" | "numeric" | "integer", _) => NumericalColumn(Symbol(name))
 
 			case Regex.attribute(name, kind, null) =>
 				throw ParseError(s"An attribute $name of type $kind is currently unsupported")
 
-			case Regex.attribute(name, _, kind) => NominalColumn(name, commaSplit(kind))
+			case Regex.attribute(name, _, kind) => NominalColumn(Symbol(name), commaSplit(kind))
 
 			case line =>
 				throw ParseError(s"Proper attribute declaration expected, got instead: $line")
@@ -82,12 +82,12 @@ object ArffLoader extends Loader {
 				}
 		}
 
-	def buildUnlabeled(it: Iterator[Double], names: Vector[String]) = {
+	def buildUnlabeled(it: Iterator[Double], names: Vector[Symbol]) = {
 		val array = it.toArray
 		val cols = names.size
 		val rows = array.size / cols
 		val matrix = new Mat(rows, cols, array, 0, cols, true)
-		Unlabeled(matrix, names.map(Symbol.apply))
+		Unlabeled(matrix, names)
 	}
 
 
@@ -101,7 +101,7 @@ object ArffLoader extends Loader {
 		buildUnlabeled(it, names)
 	}
 
-	def labeled(data: Iterator[String], attribute: String) = {
+	def labeled(data: Iterator[String], attribute: Symbol) = {
 		val cleaned = clean(data)
 		val (name, columns) = parseHeader(cleaned)
 		val names = columns.map(_.name)
@@ -118,6 +118,6 @@ object ArffLoader extends Loader {
 		}
 		val x = buildUnlabeled(it, names.patch(index, Nil, 1))
 
-		Numerical(Symbol(attribute), x, new Vec(y.toArray), MeanSquaredLoss)
+		Numerical(x, new Vec(y.toArray), NumericalColumn(attribute), MeanSquaredLoss)
 	}
 }

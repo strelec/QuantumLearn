@@ -1,5 +1,16 @@
 package qlearn.dataset.schema
 
-case class NominalColumn(name: String, values: IndexedSeq[String]) extends Column {
+import qlearn.Types.Mat
+import qlearn.dataset.{NominalFull, Nominal, Unlabeled}
+import qlearn.loss.nominal.CrossEntropyLoss
+
+case class NominalColumn(name: Symbol, values: Vector[String]) extends Column {
+	type T = Nominal
+
 	val lookup = values.zipWithIndex.toMap
+
+	def populate(x: Unlabeled, y: Mat) = {
+		assert(y.cols == values.size)
+		NominalFull(x, y, this)
+	}
 }
