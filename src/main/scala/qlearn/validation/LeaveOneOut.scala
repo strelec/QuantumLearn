@@ -1,9 +1,9 @@
 package qlearn.validation
 
-import qlearn.dataset.{Labeled, Unlabeled, SingleLabeled}
+import qlearn.dataset.Labeled
 import qlearn.ml.Model
 
-case class LeaveOneOut[T <: SingleLabeled[T]](data: T) extends Validation[T] {
+case class LeaveOneOut[T <: Labeled[T]](data: T) extends Validation[T] {
 
 	/*
 		This validator mutates the dataset, therefore we have to make a defensive copy

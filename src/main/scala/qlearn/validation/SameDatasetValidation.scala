@@ -1,9 +1,9 @@
 package qlearn.validation
 
-import qlearn.dataset.{Nominal, SingleLabeled}
+import qlearn.dataset.Labeled
 import qlearn.ml.Model
 
-case class SameDatasetValidation[T <: SingleLabeled[T]](data: T) extends Validation[T] {
+case class SameDatasetValidation[T <: Labeled[T]](data: T) extends Validation[T] {
 
 	/*
 		Simple validation on the same dataset which you learned from.

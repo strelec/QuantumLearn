@@ -13,7 +13,7 @@ abstract class Validation[T <: Labeled[T]] {
 		case x: Numerical => x.schema.loss(a.asInstanceOf[Numerical], b.asInstanceOf[Numerical])
 		case x: Binary => x.schema.loss(a.asInstanceOf[Binary], b.asInstanceOf[Binary])
 		case x: NominalBasic => x.schema.loss(a.asInstanceOf[Nominal], b.asInstanceOf[Nominal])
-		//case x: NominalFull => x.loss(a.asInstanceOf[Nominal], b.asInstanceOf[Nominal])
+		case x: NominalFull => x.schema.loss(a.asInstanceOf[Nominal], b.asInstanceOf[Nominal])
 	}
 
 	def validate(model: Model[T]): Double

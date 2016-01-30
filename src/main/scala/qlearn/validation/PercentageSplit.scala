@@ -1,9 +1,9 @@
 package qlearn.validation
 
-import qlearn.dataset.{Labeled, Nominal, SingleLabeled}
+import qlearn.dataset.{Labeled, Nominal}
 import qlearn.ml.Model
 
-case class PercentageSplit[T <: SingleLabeled[T]](data: T, percentage: Double = 70, stratify: Boolean = true) extends Validation[T] {
+case class PercentageSplit[T <: Labeled[T]](data: T, percentage: Double = 70, stratify: Boolean = true) extends Validation[T] {
 
 	/*
 		Space complexity: N if stratified, O(1) otherwise
